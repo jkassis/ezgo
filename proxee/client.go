@@ -1,4 +1,4 @@
-package proxy
+package proxee
 
 import (
 	"bytes"
@@ -12,7 +12,7 @@ import (
 
 	mrand "math/rand"
 
-	"github.com/jkassis/ezgo/env"
+	ezenv "github.com/jkassis/ezgo/env"
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p-core/host"
 	"github.com/libp2p/go-libp2p-core/network"
@@ -35,13 +35,13 @@ const peerServiceProtocol = "/proxy/0.0.1"
 var c http.Client
 
 func init() {
-	env.ParseStr(&proxyMyHostname, "PROXY_HOSTNAME")
-	env.ParseStr(&proxyAPIHTTPServiceBaseURL, "PROXY_API_HTTP_SERVICE_BASEURL")
-	env.ParseStr(&peerServiceAdvertisedHost, "PEER_SERVICE_ADVERTISED_HOST")
-	env.ParseIntEnv(&peerServiceAdvertisedPort, "PEER_SERVICE_ADVERTISED_PORT")
-	env.ParseStr(&peerServiceBindHost, "PEER_SERVICE_BIND_HOST")
-	env.ParseIntEnv(&peerServiceBindPort, "PEER_SERVICE_BIND_PORT")
-	env.ParseBool(&peerServiceDebug, "PEER_SERVICE_DEBUG")
+	ezenv.ParseStr(&proxyMyHostname, "PROXY_HOSTNAME")
+	ezenv.ParseStr(&proxyAPIHTTPServiceBaseURL, "PROXY_API_HTTP_SERVICE_BASEURL")
+	ezenv.ParseStr(&peerServiceAdvertisedHost, "PEER_SERVICE_ADVERTISED_HOST")
+	ezenv.ParseIntEnv(&peerServiceAdvertisedPort, "PEER_SERVICE_ADVERTISED_PORT")
+	ezenv.ParseStr(&peerServiceBindHost, "PEER_SERVICE_BIND_HOST")
+	ezenv.ParseIntEnv(&peerServiceBindPort, "PEER_SERVICE_BIND_PORT")
+	ezenv.ParseBool(&peerServiceDebug, "PEER_SERVICE_DEBUG")
 }
 
 // Connect to the proxy
