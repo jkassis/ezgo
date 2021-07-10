@@ -12,7 +12,7 @@ import (
 
 	mrand "math/rand"
 
-	"github.com/jkassis/printa/server/lib/easyenv"
+	"github.com/jkassis/ezgo/env"
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p-core/host"
 	"github.com/libp2p/go-libp2p-core/network"
@@ -35,13 +35,13 @@ const peerServiceProtocol = "/proxy/0.0.1"
 var c http.Client
 
 func init() {
-	easyenv.ParseStr(&proxyMyHostname, "PROXY_HOSTNAME")
-	easyenv.ParseStr(&proxyAPIHTTPServiceBaseURL, "PROXY_API_HTTP_SERVICE_BASEURL")
-	easyenv.ParseStr(&peerServiceAdvertisedHost, "PEER_SERVICE_ADVERTISED_HOST")
-	easyenv.ParseIntEnv(&peerServiceAdvertisedPort, "PEER_SERVICE_ADVERTISED_PORT")
-	easyenv.ParseStr(&peerServiceBindHost, "PEER_SERVICE_BIND_HOST")
-	easyenv.ParseIntEnv(&peerServiceBindPort, "PEER_SERVICE_BIND_PORT")
-	easyenv.ParseBool(&peerServiceDebug, "PEER_SERVICE_DEBUG")
+	env.ParseStr(&proxyMyHostname, "PROXY_HOSTNAME")
+	env.ParseStr(&proxyAPIHTTPServiceBaseURL, "PROXY_API_HTTP_SERVICE_BASEURL")
+	env.ParseStr(&peerServiceAdvertisedHost, "PEER_SERVICE_ADVERTISED_HOST")
+	env.ParseIntEnv(&peerServiceAdvertisedPort, "PEER_SERVICE_ADVERTISED_PORT")
+	env.ParseStr(&peerServiceBindHost, "PEER_SERVICE_BIND_HOST")
+	env.ParseIntEnv(&peerServiceBindPort, "PEER_SERVICE_BIND_PORT")
+	env.ParseBool(&peerServiceDebug, "PEER_SERVICE_DEBUG")
 }
 
 // Connect to the proxy
