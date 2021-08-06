@@ -1,9 +1,8 @@
 package proxy
 
 import (
-	"bytes"
+	"bufio"
 	"fmt"
-	"io/ioutil"
 	"math/rand"
 	"net"
 	"net/http"
@@ -11,12 +10,9 @@ import (
 
 	"github.com/inconshreveable/muxado"
 	ezenv "github.com/jkassis/ezgo/env"
-	"github.com/libp2p/go-libp2p-core/host"
 	ms "github.com/multiformats/go-multistream"
 	log "github.com/sirupsen/logrus"
 )
-
-var peerService host.Host
 
 var proxyProxeeServiceAdvertisedHost string
 var proxyProxeeServiceAdvertisedPort int64
@@ -67,27 +63,27 @@ func Connect(hostname string, mux *ms.MultistreamMuxer) error {
 				defer req.Close()
 
 				// send the req
-				_, err = rwc.Write([]byte(hostname))
+				log.Infof("proxy.Client.Connect: register: sending hostname: %s", hostname)
+				_, err = fmt.Fprintln(rwc, hostname)
 				if err != nil {
 					log.Errorf("proxy.Client.Connect: %s", err.Error())
 					return
 				}
-				rwc.Close()
 
 				// read the response
-				resp, err := ioutil.ReadAll(rwc)
-				if err != nil {
-					log.Errorf("proxy.Client.Connect: %s", err.Error())
+				scanner := bufio.NewScanner(rwc)
+				if !scanner.Scan() {
+					log.Errorf("proxy.Client.Connect: register: could not read response... no input")
 					return
 				}
+				resp := scanner.Text()
 
-				// validate response
-				if !bytes.Equal(resp, []byte("OK")) {
-					if err != nil {
-						log.Errorf("proxy.Client.Connect: %s", err.Error())
-						return
-					}
+				// validate it
+				if resp != "OK" {
+					log.Errorf("proxy.Client.Connect: register: expected 'OK' got '%s'", resp)
+					return
 				}
+				log.Info("proxy.Client.Connect: register: success")
 			}()
 
 			for {
@@ -106,6 +102,5 @@ func Connect(hostname string, mux *ms.MultistreamMuxer) error {
 				}()
 			}
 		}()
-
 	}
 }
