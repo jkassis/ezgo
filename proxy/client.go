@@ -40,6 +40,7 @@ func init() {
 func Connect(hostname string, mux *ms.MultistreamMuxer) error {
 	// dial forever with 10 second intervals
 	for {
+		log.Infof("Dialing %s", fmt.Sprintf("%s:%d", proxyProxeeServiceAdvertisedHost, proxyProxeeServiceAdvertisedPort))
 		conn, err := net.Dial("tcp", fmt.Sprintf("%s:%d", proxyProxeeServiceAdvertisedHost, proxyProxeeServiceAdvertisedPort))
 		if err != nil {
 			log.Errorf("proxy.Client.Connect: %s", err.Error())
