@@ -6,6 +6,7 @@ require (
 	github.com/btcsuite/btcd v0.22.0-beta // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/huin/goupnp v1.0.1 // indirect
+	github.com/inconshreveable/muxado v0.0.0-20160802230925-fc182d90f26e // indirect
 	github.com/ipfs/go-log v1.0.5 // indirect
 	github.com/ipfs/go-log/v2 v2.3.0 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.8 // indirect
@@ -17,6 +18,7 @@ require (
 	github.com/libp2p/go-libp2p-peerstore v0.2.7
 	github.com/miekg/dns v1.1.43 // indirect
 	github.com/multiformats/go-multiaddr v0.3.3
+	github.com/multiformats/go-multistream v0.2.2 // indirect
 	github.com/prometheus/common v0.29.0 // indirect
 	github.com/prometheus/procfs v0.7.0 // indirect
 	github.com/sirupsen/logrus v1.8.1
