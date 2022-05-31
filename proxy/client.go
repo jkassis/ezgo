@@ -29,7 +29,7 @@ func init() {
 	ezenv.ParseStr(&proxyAPIHTTPServiceBaseURL, "PROXY_API_HTTP_SERVICE_BASEURL")
 
 	ezenv.ParseStr(&proxyProxeeServiceAdvertisedHost, "PROXY_PROXEE_SERVICE_ADVERTISED_HOST")
-	ezenv.ParseIntEnv(&proxyProxeeServiceAdvertisedPort, "PROXY_PROXEE_SERVICE_ADVERTISED_PORT")
+	ezenv.ParseInt(&proxyProxeeServiceAdvertisedPort, "PROXY_PROXEE_SERVICE_ADVERTISED_PORT")
 	rand.Seed(time.Now().UnixNano())
 }
 

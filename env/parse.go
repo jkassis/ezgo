@@ -6,6 +6,7 @@ import (
 	"strconv"
 )
 
+// ParseBool parses a bool from env var
 var ParseBool = func(value *bool, envName string) {
 	var err error
 	// peerServiceAdvertisedPort
@@ -19,6 +20,7 @@ var ParseBool = func(value *bool, envName string) {
 	}
 }
 
+// ParseStr parses a str from env var
 var ParseStr = func(value *string, envName string) {
 	// peerServiceAdvertisedHost
 	*value = os.Getenv(envName)
@@ -27,12 +29,13 @@ var ParseStr = func(value *string, envName string) {
 	}
 }
 
-var ParseIntEnv = func(value *int64, envName string) {
+// ParseInt parses a int from env var
+var ParseInt = func(value *int64, envName string) {
 	var err error
 	// peerServiceAdvertisedPort
 	env := os.Getenv(envName)
 	if env == "" {
-		log.Fatalf("need env.%s", env)
+		log.Fatalf("need env.%s", envName)
 	}
 	*value, err = strconv.ParseInt(env, 10, 32)
 	if err != nil {
