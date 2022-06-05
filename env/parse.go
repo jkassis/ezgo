@@ -12,7 +12,7 @@ var ParseBool = func(value *bool, envName string) {
 	// peerServiceAdvertisedPort
 	env := os.Getenv(envName)
 	if env == "" {
-		log.Fatalf("need env.%s", env)
+		log.Fatalf("need env.%s", envName)
 	}
 	*value, err = strconv.ParseBool(env)
 	if err != nil {
