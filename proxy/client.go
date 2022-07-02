@@ -130,7 +130,7 @@ func Connect(hostname string, mux *ms.MultistreamMuxer) error {
 			// read the register response
 			scanner := bufio.NewScanner(ms)
 			if !scanner.Scan() {
-				log.Errorf("proxy.Client.Connect: register: could not read response... no input")
+				log.Errorf("proxy.Client.Connect: register: no response")
 				return
 			}
 			resp := scanner.Text()
