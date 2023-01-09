@@ -44,43 +44,47 @@ func Connect(hostname string, mux *ms.MultistreamMuxer) error {
 		for {
 			<-ticker.C
 
-			streamMuxMut.Lock()
-			streamMuxL := streamMux
-			streamMuxMut.Unlock()
+			err := func() error {
+				streamMuxMut.Lock()
+				streamMuxL := streamMux
+				streamMuxMut.Unlock()
 
-			if streamMuxL == nil {
-				continue
-			}
-			req, err := streamMuxL.Open()
+				if streamMuxL == nil {
+					return nil
+				}
+				req, err := streamMuxL.Open()
+				if err != nil {
+					return fmt.Errorf("proxy.Client.Connect.ping: streamMux.Open: %v", err)
+				}
+				defer req.Close()
+
+				// make a new multistream
+				ms := ms.NewMSSelect(req, "/ping")
+				defer ms.Close()
+
+				// send the ping req
+				_, err = fmt.Fprintln(ms, `ping`)
+				if err != nil {
+					return fmt.Errorf("proxy.Client.Connect.ping: send: %v", err)
+				}
+
+				// read the ping response
+				scanner := bufio.NewScanner(ms)
+				if !scanner.Scan() {
+					return fmt.Errorf("proxy.Client.Connect.ping: could not read response... no input")
+				}
+				resp := scanner.Text()
+
+				// validate it
+				if resp != "pong" {
+					return fmt.Errorf("proxy.Client.Connect.ping: expected 'pong' got '%s'", resp)
+				}
+
+				return nil
+			}()
+
 			if err != nil {
-				log.Errorf("proxy.Client.Connect.ping: streamMux.Open: %s", err.Error())
-				continue
-			}
-
-			// make a new multistream
-			ms := ms.NewMSSelect(req, "/ping")
-			defer ms.Close()
-			defer req.Close()
-
-			// send the ping req
-			_, err = fmt.Fprintln(ms, `ping`)
-			if err != nil {
-				log.Errorf("proxy.Client.Connect.ping: send: %s", err.Error())
-				continue
-			}
-
-			// read the ping response
-			scanner := bufio.NewScanner(ms)
-			if !scanner.Scan() {
-				log.Errorf("proxy.Client.Connect.ping: could not read response... no input")
-				continue
-			}
-			resp := scanner.Text()
-
-			// validate it
-			if resp != "pong" {
-				log.Errorf("proxy.Client.Connect.ping: expected 'pong' got '%s'", resp)
-				continue
+				log.Error(err)
 			}
 		}
 	}()
@@ -90,7 +94,7 @@ func Connect(hostname string, mux *ms.MultistreamMuxer) error {
 		log.Infof("Dialing %s", fmt.Sprintf("%s:%d", proxyProxeeServiceAdvertisedHost, proxyProxeeServiceAdvertisedPort))
 		conn, err := net.Dial("tcp", fmt.Sprintf("%s:%d", proxyProxeeServiceAdvertisedHost, proxyProxeeServiceAdvertisedPort))
 		if err != nil {
-			log.Errorf("proxy.Client.Connect: %s", err.Error())
+			log.Errorf("proxy.Client.Connect: %v", err)
 			time.Sleep(10*time.Second + time.Duration(rand.Int63n(int64(2*time.Second))))
 			continue
 		}
@@ -112,7 +116,7 @@ func Connect(hostname string, mux *ms.MultistreamMuxer) error {
 			// register ourselves
 			req, err := streamMux.Open()
 			if err != nil {
-				log.Errorf("proxy.Client.Connect: streamMux.Open: %s", err.Error())
+				log.Errorf("proxy.Client.Connect: streamMux.Open: %v", err)
 				return
 			}
 			ms := ms.NewMSSelect(req, "/register")
@@ -123,7 +127,7 @@ func Connect(hostname string, mux *ms.MultistreamMuxer) error {
 			log.Infof("proxy.Client.Connect: register: sending hostname: %s", hostname)
 			_, err = fmt.Fprintln(ms, hostname)
 			if err != nil {
-				log.Errorf("proxy.Client.Connect: %s", err.Error())
+				log.Errorf("proxy.Client.Connect: %v", err)
 				return
 			}
 
@@ -146,14 +150,14 @@ func Connect(hostname string, mux *ms.MultistreamMuxer) error {
 			for {
 				stream, err := streamMux.Accept()
 				if err != nil {
-					log.Errorf("proxy.Client: mplex.Accept err: %s", err.Error())
+					log.Errorf("proxy.Client: mplex.Accept err: %v", err)
 					return
 				}
 
 				go func() {
 					err = mux.Handle(stream)
 					if err != nil {
-						log.Errorf("proxy.Client: mux.Handle: %s", err.Error())
+						log.Errorf("proxy.Client: mux.Handle: %v", err)
 						return
 					}
 				}()
